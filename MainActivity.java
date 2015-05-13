@@ -1,11 +1,13 @@
 package ivano.android.com.ucanote;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements FragmentAsList.Callback{
     //cursor adapter customize to click and change something int he list view
     //http://stackoverflow.com/questions/9690439/creating-custom-simple-cursor-adapter?rq=1
 // put right allign with padding 20 from right etc so that is not urgent,if urgent leave like this
@@ -52,7 +54,6 @@ public class MainActivity extends ActionBarActivity {
 //search button, implement the other fields
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
-    private String mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,8 @@ public class MainActivity extends ActionBarActivity {
         //is not need to add it dynamically again
 //
 //        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction().add(R.id.framebig, new FragmentAsList()).commit();
+//            getFragmentManager().beginTransaction()
+//           .add(R.id.framebig, new FragmentAsList()).commit();
 //
 //        }
 
@@ -78,12 +80,14 @@ public class MainActivity extends ActionBarActivity {
             // adding or replacing the detail fragment using a
             // fragment transaction.
             if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
+                getFragmentManager().beginTransaction()
                         .replace(R.id.detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
             mTwoPane = false;
+
+            //TODO FIRST should stay or should go
             getSupportActionBar().setElevation(0f);
         }
 
@@ -115,11 +119,30 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
-
         super.onResume();
-        FragmentAsList fas = (FragmentAsList) getFragmentManager().findFragmentById(R.id.fragment_as_list);
+        //TODO first see what happen if you delete these lines
+
+        FragmentAsList fas = (FragmentAsList) getFragmentManager()
+                .findFragmentById(R.id.fragment_as_list);
 
 
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.detail_container, fragment, DETAILFRAGMENT_TAG).commit();
+        } else {
+            Intent intent = new Intent(this,Detail.class)
+                    .setData(contentUri);
+            startActivity(intent);
+        }
     }
 }
 

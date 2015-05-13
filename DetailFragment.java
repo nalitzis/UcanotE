@@ -1,18 +1,32 @@
 package ivano.android.com.ucanote;
 
+import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
+
+import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContract;
+
 
 /**
  * Created by ivano on 5/6/2015.
  */
-public class DetailFragment extends Fragment {
+//public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, android.support.v4.app.LoaderManager.LoaderCallbacks<Object> {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    TextView textView;
+    Uri mUri;
+
+    static final String DETAIL_URI = "URI";
     CheckBox checkbox;
 
     @Override
@@ -22,68 +36,66 @@ public class DetailFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Bundle arguments = getArguments();
+        View detailView = inflater.inflate(R.layout.activity_detail2, container, false);
 
-//        View EditAndCheckBox = inflater.inflate(R.layout.activity_detail_note_layout, container, false);
-//
-//        final EditText et = (EditText) EditAndCheckBox.findViewById(R.id.tasktest);
-//        checkbox = (CheckBox) EditAndCheckBox.findViewById(R.id.checkbox);
-//
 
-//        et.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//
-//                // Toast.makeText(getApplicationContext(),et.getText(),Toast.LENGTH_LONG).show();
-//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//            startActivity(intent);
-//            manageIntentAndBack();
-//take data
-//                //TODO if more time more elegant( more readable) would be create a reference from the inner getClass()
-//                // to outside http://salesforce.stackexchange.com/questions/14061/how-to-access-outer-class-instance-variables-from-inner-class-in-controller
-//
-//
-//                Bundle bundle = getActivity().getIntent().getExtras();
-//
-//                //send reply
-//
-//
-//                Intent reply_back = new Intent();
-//                //reply_back.putExtra(getPackageName(), et.getText());
-//
-//                reply_back.putExtra(getActivity().getPackageName(), et.getText().toString());
-//
-//
-//                Time today = new Time(Time.getCurrentTimezone());
-//                today.setToNow();
-//                String timeCurrent = today.format("%Y-%m-%d %H:%M:%S");
-//                reply_back.putExtra("tempo", timeCurrent);
-//
-//                //TODO ask is this efficient?
-//                //notice that i tag 0 as checked contrarily as common sense would say if one indicate a boolean
-//                Integer checkUrgent = 1;
-//                if (checkbox.isChecked()) {
-//                    checkUrgent = 0;
-//
-//                }
-//                reply_back.putExtra("YesOrNot", checkUrgent);
-//
-////reply_back.putExtra("YesOrNot",)
-//
-//                //give back the K identifier 123
-//                getActivity().setResult(123, reply_back);
-//                getActivity().finish();
-//
-//                return false;
-//            }
-//
-//
-//
-//        });
-//        return EditAndCheckBox;
-//    }
-//
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+            textView = (TextView) detailView.findViewById(R.id.detail_text);
+
+            String mUriString = mUri.toString();
+
+            textView.setText(mUriString);
+
+        }
+
+        return detailView;
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(0, null, this);
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mUri!=null) {
+
+            Long idLong= FragmentAsList.mId;
+            String idString = Long.toString(idLong);
+            String[] projection = {UcanContract.Tasks.COLUMN_TASKS};
+            String where = "_id=" + idString;
+
+
+            return new CursorLoader(getActivity(), mUri,projection, where, null, null);
+
+        }
         return null;
     }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null && data.moveToFirst()) {
+            String description = data.getString(0);
+
+            textView.setText(description);
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }
+
+
+
+

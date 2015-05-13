@@ -39,6 +39,20 @@ import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContract;
  */
 
 public class FragmentAsList extends Fragment implements  View.OnCreateContextMenuListener,LoaderManager.LoaderCallbacks<Cursor> {
+
+
+
+     public interface Callback {
+         /**
+          * DetailFragmentCallback for when an item has been selected.
+          */
+         public void onItemSelected(Uri contentUri);
+     }
+
+    //TODO  declaring a variable static is no a good way to do OO, find a more elegant solution, you do not want code
+    //that works only but code that can be maintained! find in google
+static public long mId;
+
     private SimpleCursorAdapter myCursorAdapter;
     //brought out from OnCreateView, have to be in all the class
     List<String> tasks = new ArrayList<String>();
@@ -136,7 +150,7 @@ public class FragmentAsList extends Fragment implements  View.OnCreateContextMen
                 // http://developer.android.com/guide/topics/providers/content-provider-creating.html
                 // and pass data between activities, then if there is time check also
 //
-                Intent intent_comunicate = new Intent(getActivity(), DetailNote.class);
+                Intent intent_comunicate = new Intent(getActivity(), AddTask.class);
                 //should i get rid of CIpilollino? probably you need to put an Uri there
                 intent_comunicate.putExtra(getActivity().getPackageName(), "CIao Cipollino");
                 startActivityForResult(intent_comunicate, 123);
@@ -260,10 +274,22 @@ populateView();
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("ivano.android.com.ucanote.FragmentAsList", "onItemClick (line 115): tocca posizione: " + position);
                 //TODO make a new activity where you have a causal motivational thing etc
-                Intent intent = new Intent(getActivity(), DetailNote.class);
-                startActivity(intent);
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+
+                Uri uri = Uri.parse(UcanContentProvider.CONTENT_URI + "/"
+                        + id);
+              mId=id;
+                if (cursor != null) {
+
+
+                    ((Callback) getActivity())
+                            .onItemSelected(uri);
+
+
+                }
             }
         });
+
 
 
         return hiddenList;
@@ -350,8 +376,8 @@ populateView();
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-myCursorAdapter.swapCursor(null);
-  //cVA.swapCursor(null);
+//myCursorAdapter.swapCursor(null);
+  cVA.swapCursor(null);
     }
 
 }
