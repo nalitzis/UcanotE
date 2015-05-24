@@ -8,6 +8,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity implements FragmentAsList.Callback{
+//TODO FIRST uncomment onPause
+//TODO when I add a task if I am in the list with all the urgent when i go back should I see also the non urgent or I remain that?
+//TODO  maybe some thema?
+//TODO FIRST why when I write things gives me id=1 urgent?? i think is the loader..
+  //why the first object is loaded as urgent always( value 0 also if it is 1
+    // the pending intent from the note that load an activity should take id1 screen and back main activity!
+
+
+
+//TODO FIRST uncomment TODO FIND snippets
+//notification se 5 urgenti allora al boot time scrivi aho datte' na sveglia
+    ///TODO Asynctask image password points
+    //todo in the detail you have a textview but you need click have edit text and update back the listview
+    //casual quotes?detail activity should be refined a bit
     //cursor adapter customize to click and change something int he list view
     //http://stackoverflow.com/questions/9690439/creating-custom-simple-cursor-adapter?rq=1
 // put right allign with padding 20 from right etc so that is not urgent,if urgent leave like this
@@ -70,7 +84,7 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
 
 
 
-
+notificationStart();
         if (findViewById(R.id.detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -94,6 +108,12 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
 
 
     }//end on Create
+
+    private void notificationStart() {
+        //TODO insert if urgent>10 then start notification below, of course should interrogate the database
+//insert async task call and implment the code solution 3 b here https://androidresearch.wordpress.com/2013/05/10/dealing-with-asynctask-and-screen-orientation/
+        new notificationStart();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

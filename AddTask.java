@@ -18,14 +18,8 @@ public class AddTask extends ActionBarActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_detail);
-        //TODO first please bare in mind that the original layout with edittext and checkbox is below
         setContentView(R.layout.activity_detail_note_layout);
-//        if(savedInstanceState==null){
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.detail_container,new DetailFragment())
-//                    .commit();
-//        }
+
 
         final EditText et=(EditText) findViewById(R.id. tasktest);
         checkbox = (CheckBox) findViewById(R.id.checkbox);
@@ -64,8 +58,8 @@ public class AddTask extends ActionBarActivity  {
                 String timeCurrent = today.format("%Y-%m-%d %H:%M:%S");
                 reply_back.putExtra("tempo", timeCurrent);
 
-                //TODO ask is this efficient?
-                //notice that i tag 0 as checked contrarily as common sense would say if one indicate a boolean
+                //TODO ASK is this efficient?
+                //notice that if tag 0 it results as checked contrarily as common sense would say if one indicate a boolean true
                 Integer checkUrgent=1;
                 if (checkbox.isChecked()) {
                     checkUrgent=0;

@@ -4,10 +4,13 @@ package ivano.android.com.ucanote;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
@@ -52,7 +56,9 @@ public class FragmentAsList extends Fragment implements  View.OnCreateContextMen
     //TODO  declaring a variable static is no a good way to do OO, find a more elegant solution, you do not want code
     //that works only but code that can be maintained! find in google
 static public long mId;
+static public Integer numbersUrgent;
 
+static public Integer id;
     private SimpleCursorAdapter myCursorAdapter;
     //brought out from OnCreateView, have to be in all the class
     List<String> tasks = new ArrayList<String>();
@@ -62,6 +68,8 @@ static public long mId;
     Db myDb;
     EditText etTasks;
     CustomViewAdapter cVA;
+Integer intero;
+    SharedPreferences settings;
 
     public FragmentAsList() {
         super();
@@ -75,7 +83,20 @@ static public long mId;
         super.onCreate(savedInstanceState);
 // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        if(numbersUrgent==null) {
+            numbersUrgent = 2;
+        }
+ SharedPreferences settings = getActivity().getPreferences(getActivity().MODE_PRIVATE);
+        Integer pirolo =settings.getInt("variable",numbersUrgent);
+
+
+
+
+
+
+
         getLoaderManager().initLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+
 
 
 
@@ -110,8 +131,8 @@ static public long mId;
 
 //TODO first  before to implement this see if you can put inside loader
 
-        String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_URGENCY,UcanContract.Tasks.COLUMN_TASKS};
-    int[] toViewId = new int[]{R.id.urgent_finger,R.id.text_v1};
+//        String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_URGENCY,UcanContract.Tasks.COLUMN_TASKS};
+//    int[] toViewId = new int[]{R.id.urgent_finger,R.id.text_v1};
 
    // myCursorAdapter=new SimpleCursorAdapter(getActivity(),R.layout.row_rating,null,fromFieldNames,toViewId,0);
 
@@ -134,6 +155,13 @@ static public long mId;
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_fragmentaslist, menu);
 
+
+        SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getActivity().getComponentName()));
     }
 
     @Override
@@ -177,7 +205,7 @@ static public long mId;
 //TODO ask is this efficient?
                 //TODO first http://stackoverflow.com/questions/21253332/will-loadermanager-restartloader-always-result-in-a-call-to-oncreateloader
 
- getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
               //  getActivity().getContentResolver().query(UcanContentProvider.CONTENT_URI,null,where,null,null);
 
 //
@@ -232,13 +260,15 @@ static public long mId;
 
             values.put(UcanContract.Tasks.COLUMN_URGENCY, IsCheckedMaybe);
 
-
+//TODO FIRST forse devo far partire un loader?
             getActivity().getContentResolver().insert(UcanContentProvider.BASE_CONTENT_URI, values);
 
 
             // myDb.insertRow(string, timeCurrent, null, null);
             //database query
+
             populateView();
+
 
 
         }
@@ -259,7 +289,6 @@ static public long mId;
 
         //We are inside a fragment, we have to speak with the compiler !
         registerForContextMenu(listView);
-
 populateView();
 //
  //    getLoaderManager().initLoader(0, null, this);
@@ -321,6 +350,8 @@ populateView();
         String where = String.valueOf(info.id);
 
         switch (item.getItemId()) {
+            case R.id.search:
+                break;
             case R.id.delete:
 
                 getActivity().getContentResolver().delete(uri, where, null);
@@ -351,27 +382,62 @@ populateView();
 //            String[] selection ={UcanContract.Tasks._ID,UcanContract.Tasks.COLUMN_TASKS};
 //
 //        CursorLoader cursorLoader = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI,selection, null,null,null);
-
+            Toast.makeText(getActivity(), "id=0", Toast.LENGTH_LONG);
             cl = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI, null, null, null, null);
 
 
-
-
         }else if(id==1){
+            Toast.makeText(getActivity(), "id=1", Toast.LENGTH_LONG);
 
             String selection= UcanContract.Tasks.COLUMN_URGENCY+"=0";
             cl = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI, null, selection, null, null);
+
 
         }
      return cl;
  }
 
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
+//        getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+//
+//        //TODO FIRST SHared preferences for numbersUrgent in onPause
+//    // SharedPreferences settings = getActivity().getSharedPreferences("f", 0);
+//        SharedPreferences settings = getActivity().getPreferences(getActivity().MODE_PRIVATE);
+//Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
+//      SharedPreferences.Editor editor =settings.edit();
+//       editor.putInt("variable",numbersUrgent);
+//      editor.commit();
+//
+//
+//    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
+
+        //TODO MAKE IT NUMBER COUNT only for the Urgent, then maybe you should maintain to shared preferences
+        //otherwise the value will be lost
+//TODO FIRST getColumnCount gives you the columns, not the number of rows!!!
+        //and also you should consider that you need it only for id=1!!!
+int numberRowsUrgent=data.getCount();
+//        if(loader.getId()==1) {
+//            numbersUrgent = data.getColumnCount();
+//        }
+//
+//        Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 386): numbersUrgent "+numbersUrgent);
+//        Toast.makeText(getActivity(), "NumbersUrgent is: " + numbersUrgent, Toast.LENGTH_LONG);
         cVA = new CustomViewAdapter(getActivity(),data,0);
         listView.setAdapter(cVA);
 //myCursorAdapter.swapCursor(data);
+
+
+
+
+
+
     }
 
     @Override

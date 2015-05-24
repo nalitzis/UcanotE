@@ -30,16 +30,16 @@ public final int VIEWTYPE_NORMAL=1;
 
         }
     }
-    @Override
-    public int getItemViewType(int position) {
-        //TODO decide if you want one or two and cancel or not the //annotations in this class
-return VIEWTYPE_NORMAL;
-        //return(position==0)?VIEW_TYPE_STARS:VIEWTYPE_NORMAL;
-    }
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
+//    @Override
+//    public int getItemViewType(int position) {
+//        //TODO decide if you want one or two and cancel or not the //annotations in this class
+//return VIEWTYPE_NORMAL;
+//        //return(position==0)?VIEW_TYPE_STARS:VIEWTYPE_NORMAL;
+//    }
+//    @Override
+//    public int getViewTypeCount() {
+//        return 1;
+//    }
 
 
 
@@ -54,9 +54,9 @@ return VIEWTYPE_NORMAL;
 
       int viewType = getItemViewType(cursor.getPosition());
 
-        int layoutId=-1;
-          layoutId = R.layout.textview_pretty_cool2_layout;
-
+//        int layoutId=-1;
+//          layoutId = R.layout.textview_pretty_cool2_layout;
+//
 
 
 
@@ -68,7 +68,7 @@ return VIEWTYPE_NORMAL;
 //            layoutId = R.layout.textview_pretty_cool2_layout;
 //        }
 //
-       View view= LayoutInflater.from(context).inflate(layoutId, parent, false);
+       View view= LayoutInflater.from(context).inflate(R.layout.textview_pretty_cool2_layout, parent, false);
  ViewHolder viewHolder = new ViewHolder(view);
      view.setTag(viewHolder);
        return view;
@@ -86,12 +86,22 @@ ViewHolder viewHolder= (ViewHolder) view.getTag();
 //TODO you can maintain Integer isCheckedMaybe= cursor.getColumnIndexOr..etc just be sure the condition into the if below
         //is respected e.g. double == or single =
         if(toString==0){
-           viewHolder.iv.setImageResource(R.drawable.reminder);
+
+          //TODO ASK is logical but does not work, ask coders
+          // viewHolder.iv.setImageResource(R.drawable.edit_undo);
+            viewHolder.iv.setVisibility(View.VISIBLE);
+            String tasksText = cursor.getString(cursor.getColumnIndexOrThrow(UcanContract.Tasks.COLUMN_TASKS));
+            viewHolder.tv.setText(tasksText);
+
+        }else if (toString == 1){
+            viewHolder.iv.setVisibility(View.GONE);
+            String tasksText = cursor.getString(cursor.getColumnIndexOrThrow(UcanContract.Tasks.COLUMN_TASKS));
+            viewHolder.tv.setText(tasksText);
         }
 
-
-        String tasksText = cursor.getString(cursor.getColumnIndexOrThrow(UcanContract.Tasks.COLUMN_TASKS));
-viewHolder.tv.setText(tasksText);
+//
+//        String tasksText = cursor.getString(cursor.getColumnIndexOrThrow(UcanContract.Tasks.COLUMN_TASKS));
+//viewHolder.tv.setText(tasksText);
 //
 //            // Find fields to populate in inflated template
 //            TextView tvBody = (TextView) view.findViewById(R.id.tvBody);
