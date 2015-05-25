@@ -14,7 +14,7 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
   //why the first object is loaded as urgent always( value 0 also if it is 1
     // the pending intent from the note that load an activity should take id1 screen and back main activity!
 
-
+//TODO FIRST  CLEAN UP THE CODE USE ANT AND BE SAFE YOU HAVE A PUSHED VERSION
 
 //TODO  uncomment TODO FIND snippets
 //notification se 5 urgenti allora al boot time scrivi aho datte' na sveglia

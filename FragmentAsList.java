@@ -83,8 +83,14 @@ Integer intero;
         super.onCreate(savedInstanceState);
 // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
+
+        int numberUrg = settings.getInt("variable", -1);
+        Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 89): numberUrg"+numberUrg);
+
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 91): numbersUrg"+numbersUrgent);
         if(numbersUrgent==null) {
-            numbersUrgent = 2;
+            numbersUrgent = numberUrg;
         }
 
 
@@ -92,7 +98,7 @@ Integer intero;
 
 
 
-
+//TODO FIRST lo vuoi qua? o in on create?
         getLoaderManager().initLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
 
@@ -153,7 +159,10 @@ Integer intero;
             case R.id.delete_all:
 //TODO do we need these lines:
                 registerForContextMenu(listView);
+                //TODO maybe you want to see if delete can go in a cursorLoader?
                 getActivity().getContentResolver().delete(UcanContentProvider.CONTENT_URI,null,null);
+
+                getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
                 //database query it is not redundant considering everything has been cancelled ?
 //            Cursor cursor = myDb.getallRows();
@@ -225,11 +234,10 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
 //TODO FIRST forse devo far partire un loader?
             getActivity().getContentResolver().insert(UcanContentProvider.BASE_CONTENT_URI, values);
-
-
             // myDb.insertRow(string, timeCurrent, null, null);
             //database query
 
+            getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
 
 
@@ -316,6 +324,9 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
             case R.id.delete:
 
                 getActivity().getContentResolver().delete(uri, where, null);
+                //TODO FIRST1 UPDATE delete so that numbersUrgent puo' essere ricontato meno 1, e fai lo stesso a delete all
+                getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+
                 break;
 
 
@@ -346,7 +357,7 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
             cl = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI, null, null, null, null);
 
 
-        }else if(id==1){
+        }else if(id==1 || id==2){
             Toast.makeText(getActivity(), "id=1", Toast.LENGTH_LONG);
 
             String selection= UcanContract.Tasks.COLUMN_URGENCY+"=0";
@@ -363,7 +374,8 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
     public void onPause() {
         super.onPause();
         Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-        getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+        //TODO FIRST1 get rid?
+        //getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
         //TODO FIRST1 SHared preferences see if they return urgent, please bare in mind that if a strange behaviour
         //should arise the reason is the getLoaderManager up here you can cancel it or try to start decommenting
@@ -371,13 +383,7 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
         // the sharedPreferences
 
     // SharedPreferences settings = getActivity().getSharedPreferences("f", 0);
-        SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-      SharedPreferences.Editor editor =settings.edit();
-      // editor.putInt("variable",numbersUrgent);
-       editor.putInt("variable",numbersUrgent);
-      editor.commit();
 
 
     }
@@ -393,6 +399,14 @@ Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUr
 int numberRowsUrgent=data.getCount();
         if(loader.getId()==1) {
             numbersUrgent = data.getCount();
+        }else if(loader.getId()==2){
+            numbersUrgent = data.getCount();
+            SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
+
+            SharedPreferences.Editor editor =settings.edit();
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 401): numbersUrgent"+numbersUrgent);
+            editor.putInt("variable",numbersUrgent);
+            editor.commit();
         }
 
        Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 386): numbersUrgent "+numbersUrgent);

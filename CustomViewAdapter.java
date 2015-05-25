@@ -44,7 +44,7 @@ public final int VIEWTYPE_NORMAL=1;
 
 
     public CustomViewAdapter(Context context,Cursor c, int flag){
-        super( context, c, flag);
+            super( context, c, flag);
 
 
 
