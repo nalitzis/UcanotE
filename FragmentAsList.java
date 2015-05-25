@@ -86,8 +86,6 @@ Integer intero;
         if(numbersUrgent==null) {
             numbersUrgent = 2;
         }
- SharedPreferences settings = getActivity().getPreferences(getActivity().MODE_PRIVATE);
-        Integer pirolo =settings.getInt("variable",numbersUrgent);
 
 
 
@@ -112,7 +110,7 @@ Integer intero;
 
     public void populateView() {
 
-//TODO FIRST clean the class and see if you have to get rid of the query in populate view()
+//TODO  clean the class and see if you have to get rid of the query in populate view()
 
 
 
@@ -129,7 +127,7 @@ Integer intero;
 
 
 
-//TODO first  before to implement this see if you can put inside loader
+//TODO   before to implement this see if you can put inside loader
 
 //        String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_URGENCY,UcanContract.Tasks.COLUMN_TASKS};
 //    int[] toViewId = new int[]{R.id.urgent_finger,R.id.text_v1};
@@ -203,7 +201,7 @@ Integer intero;
             case R.id.favorites:
 
 //TODO ask is this efficient?
-                //TODO first http://stackoverflow.com/questions/21253332/will-loadermanager-restartloader-always-result-in-a-call-to-oncreateloader
+                //TODO  http://stackoverflow.com/questions/21253332/will-loadermanager-restartloader-always-result-in-a-call-to-oncreateloader
 
 getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
               //  getActivity().getContentResolver().query(UcanContentProvider.CONTENT_URI,null,where,null,null);
@@ -394,25 +392,33 @@ populateView();
 
 
         }
+        //TODO FIRST getloader 2 che interroga db urgent alla fine di addtask poi ritorna numbersurgent
+       // e vedi te con le sharedpreferences
      return cl;
  }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-//        getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-//
-//        //TODO FIRST SHared preferences for numbersUrgent in onPause
-//    // SharedPreferences settings = getActivity().getSharedPreferences("f", 0);
-//        SharedPreferences settings = getActivity().getPreferences(getActivity().MODE_PRIVATE);
-//Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-//      SharedPreferences.Editor editor =settings.edit();
-//       editor.putInt("variable",numbersUrgent);
-//      editor.commit();
-//
-//
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
+        getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+
+        //TODO FIRST1 SHared preferences see if they return urgent, please bare in mind that if a strange behaviour
+        //should arise the reason is the getLoaderManager up here you can cancel it or try to start decommenting
+        //the onPause method, also see if you need numbersUrgent considering that the value is stored now in
+        // the sharedPreferences
+
+    // SharedPreferences settings = getActivity().getSharedPreferences("f", 0);
+        SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
+
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
+      SharedPreferences.Editor editor =settings.edit();
+      // editor.putInt("variable",numbersUrgent);
+       editor.putInt("variable",numbersUrgent);
+      editor.commit();
+
+
+    }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -420,15 +426,15 @@ populateView();
 
         //TODO MAKE IT NUMBER COUNT only for the Urgent, then maybe you should maintain to shared preferences
         //otherwise the value will be lost
-//TODO FIRST getColumnCount gives you the columns, not the number of rows!!!
+//  getColumnCount gives you the columns, not the number of rows!!!
         //and also you should consider that you need it only for id=1!!!
 int numberRowsUrgent=data.getCount();
-//        if(loader.getId()==1) {
-//            numbersUrgent = data.getColumnCount();
-//        }
-//
-//        Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 386): numbersUrgent "+numbersUrgent);
-//        Toast.makeText(getActivity(), "NumbersUrgent is: " + numbersUrgent, Toast.LENGTH_LONG);
+        if(loader.getId()==1) {
+            numbersUrgent = data.getCount();
+        }
+
+       Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 386): numbersUrgent "+numbersUrgent);
+        Toast.makeText(getActivity(), "NumbersUrgent is: " + numbersUrgent, Toast.LENGTH_LONG);
         cVA = new CustomViewAdapter(getActivity(),data,0);
         listView.setAdapter(cVA);
 //myCursorAdapter.swapCursor(data);

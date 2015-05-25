@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity implements FragmentAsList.Callback{
-//TODO FIRST uncomment onPause
 //TODO when I add a task if I am in the list with all the urgent when i go back should I see also the non urgent or I remain that?
 //TODO  maybe some thema?
 //TODO FIRST why when I write things gives me id=1 urgent?? i think is the loader..
@@ -17,7 +16,7 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
 
 
 
-//TODO FIRST uncomment TODO FIND snippets
+//TODO  uncomment TODO FIND snippets
 //notification se 5 urgenti allora al boot time scrivi aho datte' na sveglia
     ///TODO Asynctask image password points
     //todo in the detail you have a textview but you need click have edit text and update back the listview
@@ -49,7 +48,6 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
 // a picker to set in from 1 to 5, help, share, at place of ID if urgent give a symbol, maybe the index!
     //transparent enlarge quote
 
-    //TODO FIRST  see difference between debug favorite and reset in menu
 
     // //spinner into menu on the left
 //    http://www.hasnath.net/blog/actionbar-tab-spinnerlist-navigation-at-the-same-time
@@ -63,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
     //NOTA I resolved the issue that inside the fragment was not working the contextmenu click, using a Log.d template and discovering that I had to implement the method
     //inside the fragment view
     //personalize ActionBar http://stackoverflow.com/questions/12897071/how-to-change-size-of-titles-text-on-action-bar
-    //TODO first order by date, id( insertion), preferences, share, fragment, services, syncadapter, broadcast receiver,
+    //TODO FIRST order by date, id( insertion), preferences, share, fragment, services, syncadapter, broadcast receiver,
     //save when ord ered, drag list view, transparentbackground, choice background, distantiate listview, personalize actionbar.
 //search button, implement the other fields
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -101,7 +99,7 @@ notificationStart();
         } else {
             mTwoPane = false;
 
-            //TODO FIRST should stay or should go
+            //TODO  should stay or should go
             getSupportActionBar().setElevation(0f);
         }
 
@@ -140,7 +138,7 @@ notificationStart();
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO first see what happen if you delete these lines
+        //TODO  see what happen if you delete these lines
 
         FragmentAsList fas = (FragmentAsList) getFragmentManager()
                 .findFragmentById(R.id.fragment_as_list);

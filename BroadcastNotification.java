@@ -8,6 +8,7 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
@@ -24,16 +25,27 @@ public class BroadcastNotification extends BroadcastReceiver {
         //manage more intents inside Broadcast http://stackoverflow.com/questions/9128103/broadcastreceiver-with-multiple-filters-or-multiple-broadcastreceivers
 
 //if (count>9) {
-//TODO first shared preferences in BroadCast to call numbersUrgent
-//        SharedPreferences= context.getSharedPreferences("value", context.MODE_PRIVATE);
+//TODO FIRST  resolved? shared preferences in BroadCast to call numbersUrgent
+//     SharedPreferences sharedPreferences= context.getSharedPreferences("value", context.MODE_PRIVATE);
 //        String numberString=sharedPreferences.getString("key","");
+//        SharedPreferences settings = context.getPreferences(getActivity().MODE_PRIVATE);
+//
+//        Integer pirolo =settings.getInt("variable",numbersUrgent);
+
+        //TODO FIRST metti il backstack come main activity !
+        SharedPreferences settings = context.getSharedPreferences("prova",context.MODE_PRIVATE);
+
+        int numberUrg = settings.getInt("variable", -1);
+
 
         // int numbersUrgent;
-        String numberUrgent = Integer.toString( FragmentAsList.numbersUrgent);
+       // String numberUrgent = Integer.toString( FragmentAsList.numbersUrgent);
+        String numberUrgent = Integer.toString(numberUrg);
 
 
 
-//TODO FIRST notification if click open urgents
+
+//TODO FIRST resolved? notification if click open urgents
 
         Intent intentTopNotification = new Intent(context, MainActivity.class);
         PendingIntent notificIntent = PendingIntent.getActivity(context, 0,
