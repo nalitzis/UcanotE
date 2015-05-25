@@ -108,40 +108,7 @@ Integer intero;
     }
 
 
-    public void populateView() {
 
-//TODO  clean the class and see if you have to get rid of the query in populate view()
-
-
-
-
-//        String[] fromFieldNames = new String[]{UcanContract.Tasks._ID, UcanContract.Tasks.COLUMN_TASKS};
-//        int[] toViewId = new int[]{R.id.text_v1, R.id.text_v2};
-//        myCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.textview_pretty_cool2_layout, null, fromFieldNames, toViewId, 0);
-//        listView.setAdapter(myCursorAdapter);
-
-        //before to implement the loader
-//        String[] projection ={UcanContract.Tasks._ID,UcanContract.Tasks.COLUMN_TASKS};
-//        Cursor cursor=getActivity().getContentResolver().query(UcanContentProvider.CONTENT_URI,projection,null,null,null);
-//
-
-
-
-//TODO   before to implement this see if you can put inside loader
-
-//        String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_URGENCY,UcanContract.Tasks.COLUMN_TASKS};
-//    int[] toViewId = new int[]{R.id.urgent_finger,R.id.text_v1};
-
-   // myCursorAdapter=new SimpleCursorAdapter(getActivity(),R.layout.row_rating,null,fromFieldNames,toViewId,0);
-
-//   myCursorAdapter=new SimpleCursorAdapter(getActivity(),R.layout.textview_pretty_cool2_layout,null,fromFieldNames,toViewId,0);
-//listView.setAdapter(myCursorAdapter);
-
-
-//        CustomViewAdapter cVA = new CustomViewAdapter(getActivity(),cursore,0);
-//        listView.setAdapter(cVA);
-
-    }
 
 
     @Override
@@ -189,7 +156,6 @@ Integer intero;
                 getActivity().getContentResolver().delete(UcanContentProvider.CONTENT_URI,null,null);
 
                 //database query it is not redundant considering everything has been cancelled ?
-                populateView();
 //            Cursor cursor = myDb.getallRows();
 //            String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_TASKS};
 //            int[] toViewId = new int[]{R.id.text_view};
@@ -213,7 +179,6 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
             case R.id.undo_reset:
                 getLoaderManager().restartLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-                populateView();
 
                 break;
 
@@ -265,7 +230,6 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
             // myDb.insertRow(string, timeCurrent, null, null);
             //database query
 
-            populateView();
 
 
 
@@ -287,7 +251,6 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
         //We are inside a fragment, we have to speak with the compiler !
         registerForContextMenu(listView);
-populateView();
 //
  //    getLoaderManager().initLoader(0, null, this);
 //
@@ -353,7 +316,6 @@ populateView();
             case R.id.delete:
 
                 getActivity().getContentResolver().delete(uri, where, null);
-                populateView();
                 break;
 
 
