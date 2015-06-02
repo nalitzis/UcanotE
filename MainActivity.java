@@ -7,13 +7,66 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity implements FragmentAsList.Callback{
+public class MainActivity extends ActionBarActivity    implements FragmentAsList.Callback{
+    //TODO FIRST1 reminder notification after spinner list
+    //1 day, 3 days, 5 days, 1 week
+    // or calendar  http://stackoverflow.com/questions/10977422/how-to-create-simple-calendar-on-android
+//TODO FIRST1 http://stackoverflow.com/questions/12208008/how-to-create-a-reminder-notification
+// http://stackoverflow.com/questions/21078609/start-app-and-load-data-with-viewpager-asynctask
+//splashscreen and viewpager http://stackoverflow.com/questions/19225969/splash-screen-with-asynctask
+
+//    Intent myIntent = new Intent(this , NotifyService.class);
+//    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//    pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+//
+//    Calendar calendar = Calendar.getInstance();
+//    calendar.set(Calendar.SECOND, 0);
+//    calendar.set(Calendar.MINUTE, 0);
+//    calendar.set(Calendar.HOUR, 0);
+//    calendar.set(Calendar.AM_PM, Calendar.AM);
+//    calendar.add(Calendar.DAY_OF_MONTH, 1);
+//
+//    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000*60*60*24 , pendingIntent);
+//    This will trigger Alarm each day at midnight (12 am). You can change that if you want.
+//
+//    Now, create a Service NotifyService and put this code in its onCreate():This will trigger Alarm each day at midnight (12 am). You can change that if you want.
+//
+//    Now, create a Service NotifyService and put this code in its onCreate():
+//
+//
+//    @Override
+//    public void onCreate() {
+//        NotificationManager mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+//        Notification notification = new Notification(R.drawable.notification_icon, "Notify Alarm strart", System.currentTimeMillis());
+//        Intent myIntent = new Intent(this , MyActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+//        notification.setLatestEventInfo(this, "Notify label", "Notify text", contentIntent);
+//        mNM.notify(NOTIFICATION, notification);
+//    }
+//
+//
+//    here is a little YouTube Video Tutorial about daily notifications. You can find the source code in the description.
+//
+//    This video is not made by myself. But I think its a quick help. Although i recommend some changes because the Notification.Builder is deprecated:
+//
+//            1.
+//
+//            import android.support.v4.app.NotificationCompat;
+//    2.
+//
+//    // Change: Notification mNotify = new Notification.Builder(this) to
+//    Notification mNotify = new NotificationCompat.Builder(this)
+//    Have Fun!
+//    https://www.youtube.com/watch?v=tyVaPHv-RGo
+//
+
+
+    //TODO FIRST CONFRONTW ITH THE ONE THAT WORKS
+//TODO terrible icon for ShareActionProvider, you want a red share!
+//TODO FIRST start with animations http://www.androidhive.info/2013/06/android-working-with-xml-animations/ FOR asyNCTASK OR sHAREiNTENT
 //TODO when I add a task if I am in the list with all the urgent when i go back should I see also the non urgent or I remain that?
 //TODO  maybe some thema?
-//TODO FIRST why when I write things gives me id=1 urgent?? i think is the loader..
-  //why the first object is loaded as urgent always( value 0 also if it is 1
-    // the pending intent from the note that load an activity should take id1 screen and back main activity!
-
+//TODO change color ActionBar http://stackoverflow.com/questions/8024706/how-do-i-change-the-background-color-of-the-actionbar-of-an-actionbaractivity-us
 //TODO FIRST  CLEAN UP THE CODE USE ANT AND BE SAFE YOU HAVE A PUSHED VERSION
 
 //TODO  uncomment TODO FIND snippets
@@ -61,7 +114,7 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
     //NOTA I resolved the issue that inside the fragment was not working the contextmenu click, using a Log.d template and discovering that I had to implement the method
     //inside the fragment view
     //personalize ActionBar http://stackoverflow.com/questions/12897071/how-to-change-size-of-titles-text-on-action-bar
-    //TODO FIRST order by date, id( insertion), preferences, share, fragment, services, syncadapter, broadcast receiver,
+    //TODO  order by date, id( insertion), preferences, share, fragment, services, syncadapter, broadcast receiver,
     //save when ord ered, drag list view, transparentbackground, choice background, distantiate listview, personalize actionbar.
 //search button, implement the other fields
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -71,6 +124,10 @@ public class MainActivity extends ActionBarActivity implements FragmentAsList.Ca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
         //We can remove it because is already declared in the layout above activity_main so there
         //is not need to add it dynamically again
 //
@@ -162,7 +219,15 @@ notificationStart();
             startActivity(intent);
         }
     }
-}
+
+
+   }
+
+//    @Override
+//    protected void onDestroy() {
+//        this.unregisterReceiver(receiver);
+//        super.onDestroy();
+//    }
 
 
 

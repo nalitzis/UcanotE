@@ -4,17 +4,18 @@ package ivano.android.com.ucanote;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.app.SearchManager;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -27,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
@@ -70,6 +70,10 @@ static public Integer id;
     CustomViewAdapter cVA;
 Integer intero;
     SharedPreferences settings;
+    Intent mShareIntent;
+    BroadcastNotification receiver;
+
+   private ShareActionProvider mShareActionProvider;
 
     public FragmentAsList() {
         super();
@@ -91,14 +95,18 @@ Integer intero;
 Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 91): numbersUrg"+numbersUrgent);
         if(numbersUrgent==null) {
             numbersUrgent = numberUrg;
+
         }
+        IntentFilter filter = new IntentFilter();
+filter.addAction(BroadcastNotification.ACTION);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+           receiver = new BroadcastNotification();
+        getActivity().registerReceiver(receiver, filter);
 
 
 
 
-
-
-//TODO FIRST lo vuoi qua? o in on create?
+//TODO  lo vuoi qua? o in on create Fragment?
         getLoaderManager().initLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
 
@@ -127,13 +135,25 @@ Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 91): numbersUr
         inflater.inflate(R.menu.menu_fragmentaslist, menu);
 
 
-        SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getActivity().getComponentName()));
-    }
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.share);
+
+       // Fetch and store ShareActionProvider
+//       mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+//                if(mShareActionProvider!=null) {
+//                    mShareActionProvider.setShareIntent(mShareIntent);
+//                }
+
+     mShareActionProvider = new ShareActionProvider(getActivity());
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
+
+//        SearchManager searchManager =
+//                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView =
+//                (SearchView) menu.findItem(R.id.search).getActionView();
+//        searchView.setSearchableInfo(
+//                searchManager.getSearchableInfo(getActivity().getComponentName()));
+ }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -154,6 +174,18 @@ Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 91): numbersUr
                 intent_comunicate.putExtra(getActivity().getPackageName(), "CIao Cipollino");
                 startActivityForResult(intent_comunicate, 123);
 
+                break;
+
+            case R.id.share:
+                mShareIntent = new Intent();
+                mShareIntent.setAction(Intent.ACTION_SEND);
+                mShareIntent.setType("text/plain");
+                mShareIntent.putExtra(Intent.EXTRA_TEXT, "From me to you, this text is new.");
+                //Intent msh = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain").setText("funziona").getIntent();
+
+                if(mShareActionProvider!=null){
+mShareActionProvider.setShareIntent(mShareIntent);
+                }
                 break;
 
             case R.id.delete_all:
@@ -222,7 +254,6 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 //                    + info.id);
 //            String where =String.valueOf(info.id);
 
-
             ContentValues values = new ContentValues();
             values.put(UcanContract.Tasks.COLUMN_TASKS, string);
 
@@ -232,7 +263,7 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
             values.put(UcanContract.Tasks.COLUMN_URGENCY, IsCheckedMaybe);
 
-//TODO FIRST forse devo far partire un loader?
+//TODO  forse devo far partire un loader?
             getActivity().getContentResolver().insert(UcanContentProvider.BASE_CONTENT_URI, values);
             // myDb.insertRow(string, timeCurrent, null, null);
             //database query
@@ -333,7 +364,13 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
 
             case R.id.edit:
-//TODo update?
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onContextItemSelected (line 361): ");
+                Intent intent = new Intent(getActivity(), IntentServiceClass.class);
+                intent.putExtra("Pom","pomello");
+                getActivity().startService(intent);
+
+
+
 
                 break;
             case R.id.share:
@@ -365,24 +402,18 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
 
         }
-        //TODO FIRST getloader 2 che interroga db urgent alla fine di addtask poi ritorna numbersurgent
-       // e vedi te con le sharedpreferences
+
      return cl;
  }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-        //TODO FIRST1 get rid?
+
+        getActivity().unregisterReceiver(receiver);
+            Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
+        //TODO FIRST get rid of Onpause?
         //getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-
-        //TODO FIRST1 SHared preferences see if they return urgent, please bare in mind that if a strange behaviour
-        //should arise the reason is the getLoaderManager up here you can cancel it or try to start decommenting
-        //the onPause method, also see if you need numbersUrgent considering that the value is stored now in
-        // the sharedPreferences
-
-    // SharedPreferences settings = getActivity().getSharedPreferences("f", 0);
 
 
 
