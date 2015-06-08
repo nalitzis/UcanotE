@@ -7,13 +7,23 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity    implements FragmentAsList.Callback{
+public class MainActivity extends ActionBarActivity    implements FragmentAsList.Callback {
     //TODO FIRST1 reminder notification after spinner list
+    //TODO FIRST1 cambia nomein Main Activity action bar
+    //TODO FIRST1 fix splash screen to Linear Layout
     //1 day, 3 days, 5 days, 1 week
+    //http://stackoverflow.com/questions/1082437/android-alarmmanager?lq=1
+    //http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
     // or calendar  http://stackoverflow.com/questions/10977422/how-to-create-simple-calendar-on-android
 //TODO FIRST1 http://stackoverflow.com/questions/12208008/how-to-create-a-reminder-notification
-// http://stackoverflow.com/questions/21078609/start-app-and-load-data-with-viewpager-asynctask
+// http://stackoverflow.com/questions/21078609/start-app-and-load-data-with-viewpager-asynctask     
 //splashscreen and viewpager http://stackoverflow.com/questions/19225969/splash-screen-with-asynctask
+    //http://stackoverflow.com/questions/27264638/android-splash-screen-asynctas
+    // google it:android splash screen asynctask
+
+
+
+
 
 //    Intent myIntent = new Intent(this , NotifyService.class);
 //    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
@@ -27,6 +37,8 @@ public class MainActivity extends ActionBarActivity    implements FragmentAsList
 //    calendar.add(Calendar.DAY_OF_MONTH, 1);
 //
 //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000*60*60*24 , pendingIntent);
+
+    //http://stackoverflow.com/questions/12208008/how-to-create-a-reminder-notification
 //    This will trigger Alarm each day at midnight (12 am). You can change that if you want.
 //
 //    Now, create a Service NotifyService and put this code in its onCreate():This will trigger Alarm each day at midnight (12 am). You can change that if you want.
@@ -128,18 +140,7 @@ public class MainActivity extends ActionBarActivity    implements FragmentAsList
 
 
 
-        //We can remove it because is already declared in the layout above activity_main so there
-        //is not need to add it dynamically again
-//
-//        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction()
-//           .add(R.id.framebig, new FragmentAsList()).commit();
-//
-//        }
-
-
-
-notificationStart();
+        notificationStart();
         if (findViewById(R.id.detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -161,13 +162,12 @@ notificationStart();
         }
 
 
-
     }//end on Create
 
     private void notificationStart() {
         //TODO insert if urgent>10 then start notification below, of course should interrogate the database
 //insert async task call and implment the code solution 3 b here https://androidresearch.wordpress.com/2013/05/10/dealing-with-asynctask-and-screen-orientation/
-        new notificationStart();
+
     }
 
     @Override
@@ -197,8 +197,7 @@ notificationStart();
         super.onResume();
         //TODO  see what happen if you delete these lines
 
-        FragmentAsList fas = (FragmentAsList) getFragmentManager()
-                .findFragmentById(R.id.fragment_as_list);
+
 
 
     }
@@ -214,14 +213,13 @@ notificationStart();
             getFragmentManager().beginTransaction()
                     .replace(R.id.detail_container, fragment, DETAILFRAGMENT_TAG).commit();
         } else {
-            Intent intent = new Intent(this,Detail.class)
+            Intent intent = new Intent(this, Detail.class)
                     .setData(contentUri);
             startActivity(intent);
         }
     }
 
-
-   }
+}
 
 //    @Override
 //    protected void onDestroy() {

@@ -16,8 +16,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,13 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ivano.android.com.ucanote.ivano.android.com.ucanote.db.Db;
 import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContentProvider;
@@ -53,25 +46,23 @@ public class FragmentAsList extends Fragment implements  View.OnCreateContextMen
          public void onItemSelected(Uri contentUri);
      }
 
-    //TODO  declaring a variable static is no a good way to do OO, find a more elegant solution, you do not want code
-    //that works only but code that can be maintained! find in google
+
 static public long mId;
 static public Integer numbersUrgent;
-
+static public String description;
 static public Integer id;
-    private SimpleCursorAdapter myCursorAdapter;
-    //brought out from OnCreateView, have to be in all the class
-    List<String> tasks = new ArrayList<String>();
+
+
+
+
     ListView listView;
     CursorLoader cl;
-    Time today = new Time(Time.getCurrentTimezone());
+
     Db myDb;
-    EditText etTasks;
     CustomViewAdapter cVA;
-Integer intero;
-    SharedPreferences settings;
     Intent mShareIntent;
     BroadcastNotification receiver;
+    AdapterView.AdapterContextMenuInfo info;
 
    private ShareActionProvider mShareActionProvider;
 
@@ -85,14 +76,12 @@ Integer intero;
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-// Add this line in order for this fragment to handle menu events.
+
         setHasOptionsMenu(true);
         SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
         int numberUrg = settings.getInt("variable", -1);
-        Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 89): numberUrg"+numberUrg);
 
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 91): numbersUrg"+numbersUrgent);
         if(numbersUrgent==null) {
             numbersUrgent = numberUrg;
 
@@ -106,14 +95,13 @@ filter.addAction(BroadcastNotification.ACTION);
 
 
 
-//TODO  lo vuoi qua? o in on create Fragment?
-        getLoaderManager().initLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+
+        getLoaderManager().initLoader(4, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
 
 
 
 
-//open Database
 
         myDb = new Db(getActivity());
         myDb.open();
@@ -135,42 +123,22 @@ filter.addAction(BroadcastNotification.ACTION);
         inflater.inflate(R.menu.menu_fragmentaslist, menu);
 
 
-        // Locate MenuItem with ShareActionProvider
         MenuItem item = menu.findItem(R.id.share);
 
-       // Fetch and store ShareActionProvider
-//       mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-//                if(mShareActionProvider!=null) {
-//                    mShareActionProvider.setShareIntent(mShareIntent);
-//                }
+
 
      mShareActionProvider = new ShareActionProvider(getActivity());
         MenuItemCompat.setActionProvider(item, mShareActionProvider);
-
-//        SearchManager searchManager =
-//                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView =
-//                (SearchView) menu.findItem(R.id.search).getActionView();
-//        searchView.setSearchableInfo(
-//                searchManager.getSearchableInfo(getActivity().getComponentName()));
  }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch (id) {
             case R.id.add:
 
-                // http://developer.android.com/guide/topics/providers/content-provider-creating.html
-                // and pass data between activities, then if there is time check also
-//
                 Intent intent_comunicate = new Intent(getActivity(), AddTask.class);
-                //should i get rid of CIpilollino? probably you need to put an Uri there
                 intent_comunicate.putExtra(getActivity().getPackageName(), "CIao Cipollino");
                 startActivityForResult(intent_comunicate, 123);
 
@@ -180,8 +148,7 @@ filter.addAction(BroadcastNotification.ACTION);
                 mShareIntent = new Intent();
                 mShareIntent.setAction(Intent.ACTION_SEND);
                 mShareIntent.setType("text/plain");
-                mShareIntent.putExtra(Intent.EXTRA_TEXT, "From me to you, this text is new.");
-                //Intent msh = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain").setText("funziona").getIntent();
+                mShareIntent.putExtra(Intent.EXTRA_TEXT, "Download this app from google play, it is pretty cool!");
 
                 if(mShareActionProvider!=null){
 mShareActionProvider.setShareIntent(mShareIntent);
@@ -189,37 +156,20 @@ mShareActionProvider.setShareIntent(mShareIntent);
                 break;
 
             case R.id.delete_all:
-//TODO do we need these lines:
                 registerForContextMenu(listView);
-                //TODO maybe you want to see if delete can go in a cursorLoader?
                 getActivity().getContentResolver().delete(UcanContentProvider.CONTENT_URI,null,null);
 
                 getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-
-                //database query it is not redundant considering everything has been cancelled ?
-//            Cursor cursor = myDb.getallRows();
-//            String[] fromFieldNames = new String[]{UcanContract.Tasks.COLUMN_TASKS};
-//            int[] toViewId = new int[]{R.id.text_view};
-//
-//
-//            SimpleCursorAdapter myCursorAdapter;
-//            myCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.textview_pretty_cool, cursor, fromFieldNames, toViewId, 0);
-//            listView.setAdapter(myCursorAdapter);
             case R.id.favorites:
 
-//TODO ask is this efficient?
-                //TODO  http://stackoverflow.com/questions/21253332/will-loadermanager-restartloader-always-result-in-a-call-to-oncreateloader
-
 getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-              //  getActivity().getContentResolver().query(UcanContentProvider.CONTENT_URI,null,where,null,null);
 
-//
 
                 break;
 
 
             case R.id.undo_reset:
-                getLoaderManager().restartLoader(0, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+                getLoaderManager().restartLoader(4, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
                 break;
 
@@ -238,21 +188,8 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
 
 
-            Log.d("FragmentAsList", "stringa dall altra activity: " +string);
-            Toast.makeText(getActivity(), string, Toast.LENGTH_LONG).show();
-            ///database insert
-            //today.setToNow();
-            //String timeCurrent = today.format("%Y-%m-%d %H:%M:%S");
-            Toast.makeText(getActivity(), timeCurrent1, Toast.LENGTH_LONG).show();
-
-
 
             registerForContextMenu(listView);
-//            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-//            int index = info.position;
-//            Uri uri = Uri.parse(UcanContentProvider.CONTENT_URI + "/"
-//                    + info.id);
-//            String where =String.valueOf(info.id);
 
             ContentValues values = new ContentValues();
             values.put(UcanContract.Tasks.COLUMN_TASKS, string);
@@ -263,12 +200,8 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
             values.put(UcanContract.Tasks.COLUMN_URGENCY, IsCheckedMaybe);
 
-//TODO  forse devo far partire un loader?
             getActivity().getContentResolver().insert(UcanContentProvider.BASE_CONTENT_URI, values);
-            // myDb.insertRow(string, timeCurrent, null, null);
-            //database query
-
-            getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
+            getLoaderManager().initLoader(4, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
 
 
@@ -281,32 +214,21 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
         View hiddenList = inflater.inflate(R.layout.fragment_as_list_layout, container, false);
 
-        // Get a reference to the ListView, and attach this adapter to it.
         listView = (ListView) hiddenList.findViewById(R.id.list_hidden);
 
-        //NOTA ora funziona, devi fare registerForContext mettendo la View di cui hai bisogno e poi chiamare il menu al tocco!
 
 
 
-        //We are inside a fragment, we have to speak with the compiler !
         registerForContextMenu(listView);
-//
- //    getLoaderManager().initLoader(0, null, this);
-//
-//        String[] fromFieldNames = new String[]{UcanContract.Tasks._ID, UcanContract.Tasks.COLUMN_TASKS};
-//        int[] toViewId = new int[]{R.id.text_v1, R.id.text_v2};
-//        myCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.textview_pretty_cool2_layout, null, fromFieldNames, toViewId, 0);
 
-        //listView.setAdapter(myCursorAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("ivano.android.com.ucanote.FragmentAsList", "onItemClick (line 115): tocca posizione: " + position);
                 //TODO make a new activity where you have a causal motivational thing etc
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-
                 Uri uri = Uri.parse(UcanContentProvider.CONTENT_URI + "/"
                         + id);
+
               mId=id;
                 if (cursor != null) {
 
@@ -342,31 +264,32 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
     public boolean onContextItemSelected(MenuItem item) {
 
         registerForContextMenu(listView);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+         info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
+
 
         Uri uri = Uri.parse(UcanContentProvider.CONTENT_URI + "/"
                 + info.id);
         String where = String.valueOf(info.id);
 
         switch (item.getItemId()) {
-            case R.id.search:
-                break;
+
             case R.id.delete:
 
                 getActivity().getContentResolver().delete(uri, where, null);
-                //TODO FIRST1 UPDATE delete so that numbersUrgent puo' essere ricontato meno 1, e fai lo stesso a delete all
-                getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-
+                getLoaderManager().initLoader(2, null, (LoaderManager.LoaderCallbacks<Cursor>) this);
                 break;
 
 
 
 
-            case R.id.edit:
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onContextItemSelected (line 361): ");
+            case R.id.rememberIn5:
+                Cursor cursor = cVA.getCursor();
+                cursor.moveToPosition(index);
+                description= cursor.getString(1);
+
                 Intent intent = new Intent(getActivity(), IntentServiceClass.class);
-                intent.putExtra("Pom","pomello");
+                intent.putExtra("Pom",description);
                 getActivity().startService(intent);
 
 
@@ -384,21 +307,32 @@ Log.d("ivano.android.com.ucanote.FragmentAsList", "onContextItemSelected (line 3
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Toast.makeText(getActivity(),"id is:"+id,Toast.LENGTH_LONG).show();
 
-        if (id==0) {
-//            String[] selection ={UcanContract.Tasks._ID,UcanContract.Tasks.COLUMN_TASKS};
-//
-//        CursorLoader cursorLoader = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI,selection, null,null,null);
-            Toast.makeText(getActivity(), "id=0", Toast.LENGTH_LONG);
+        if (id==4) {
             cl = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI, null, null, null, null);
 
 
         }else if(id==1 || id==2){
-            Toast.makeText(getActivity(), "id=1", Toast.LENGTH_LONG);
 
             String selection= UcanContract.Tasks.COLUMN_URGENCY+"=0";
             cl = new CursorLoader(getActivity(), UcanContentProvider.CONTENT_URI, null, selection, null, null);
+
+
+        }else if(id==3){
+
+
+
+
+
+
+
+            String[] projection = {UcanContract.Tasks.COLUMN_TASKS};
+            Uri uri = Uri.parse(UcanContentProvider.CONTENT_URI + "/"
+                    + info.id);
+
+            cl= new CursorLoader(getActivity(),uri,projection,null, null,null);
+
+
 
 
         }
@@ -410,52 +344,51 @@ Log.d("ivano.android.com.ucanote.FragmentAsList", "onContextItemSelected (line 3
     public void onPause() {
         super.onPause();
 
-        getActivity().unregisterReceiver(receiver);
-            Log.d("ivano.android.com.ucanote.FragmentAsList", "onPause (line 404): numbersUrgent"+numbersUrgent);
-        //TODO FIRST get rid of Onpause?
-        //getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>)this);
-
+        try {
+            getActivity().unregisterReceiver(receiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-
-        //TODO MAKE IT NUMBER COUNT only for the Urgent, then maybe you should maintain to shared preferences
-        //otherwise the value will be lost
-//  getColumnCount gives you the columns, not the number of rows!!!
-        //and also you should consider that you need it only for id=1!!!
-int numberRowsUrgent=data.getCount();
-        if(loader.getId()==1) {
+        if (loader.getId() == 1) {
             numbersUrgent = data.getCount();
-        }else if(loader.getId()==2){
+            cVA = new CustomViewAdapter(getActivity(), data, 0);
+            listView.setAdapter(cVA);
+        } else if (loader.getId() == 2) {
             numbersUrgent = data.getCount();
             SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
-            SharedPreferences.Editor editor =settings.edit();
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 401): numbersUrgent"+numbersUrgent);
-            editor.putInt("variable",numbersUrgent);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt("variable", numbersUrgent);
             editor.commit();
+            cVA = new CustomViewAdapter(getActivity(), data, 0);
+            listView.setAdapter(cVA);
+        } else if (loader.getId() == 3) {
+
+           if (data != null && data.moveToFirst()) {
+                description = data.getString(0);
+                Toast.makeText(getActivity(), "description is:" + description, Toast.LENGTH_LONG).show();
+                getLoaderManager().initLoader(4, null, (LoaderManager.LoaderCallbacks<Cursor>) this);
+
+           }
+        }else if(loader.getId()==4){
+                numbersUrgent = data.getCount();
+                cVA = new CustomViewAdapter(getActivity(), data, 0);
+                listView.setAdapter(cVA);
+            }
+
+
+
+
         }
-
-       Log.d("ivano.android.com.ucanote.FragmentAsList", "onLoadFinished (line 386): numbersUrgent "+numbersUrgent);
-        Toast.makeText(getActivity(), "NumbersUrgent is: " + numbersUrgent, Toast.LENGTH_LONG);
-        cVA = new CustomViewAdapter(getActivity(),data,0);
-        listView.setAdapter(cVA);
-//myCursorAdapter.swapCursor(data);
-
-
-
-
-
-
-    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-//myCursorAdapter.swapCursor(null);
   cVA.swapCursor(null);
     }
 

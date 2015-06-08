@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContract;
@@ -20,14 +19,13 @@ import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContract;
 /**
  * Created by ivano on 5/6/2015.
  */
-//public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, android.support.v4.app.LoaderManager.LoaderCallbacks<Object> {
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     TextView textView;
     Uri mUri;
 
     static final String DETAIL_URI = "URI";
-    CheckBox checkbox;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +57,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(4, null, this);
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -68,7 +66,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (mUri!=null) {
 
-            Long idLong= FragmentAsList.mId;
+             Long idLong= FragmentAsList.mId;
             String idString = Long.toString(idLong);
             String[] projection = {UcanContract.Tasks.COLUMN_TASKS};
             String where = "_id=" + idString;

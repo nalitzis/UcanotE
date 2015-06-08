@@ -36,17 +36,14 @@ public class UcanContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
 
-        //as inner class
         myDBHelper = new Db.DatabaseHelper(getContext());
 
 
         return false;
     }
 
-    //
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        //Using SQLiteQueryBuilder instead of query() method
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(UcanContract.Tasks.DATABASE_TABLE);
 

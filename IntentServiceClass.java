@@ -1,8 +1,11 @@
 package ivano.android.com.ucanote;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.util.Log;
+
+import java.util.Calendar;
 
 /**
  * Created by ivano on 5/24/2015.
@@ -12,9 +15,8 @@ public class IntentServiceClass extends IntentService {
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
-     * @param name Used to name the worker thread, important only for debugging.
      */
-    public static final String PARAM_IN_MSG = "imsg";
+
     public IntentServiceClass() {
         super("IntentServiceClass");
     }
@@ -23,15 +25,26 @@ public class IntentServiceClass extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String msg =intent.getStringExtra("Pom");
-        String rsltText=msg;
-        Log.d("ivano.android.com.ucanote.IntentServiceClass", "onHandleIntent (line 25): ");
+
+    Intent myIntent = new Intent(BroadcastNotification.ACTION);
+    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+    PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
 
-        Intent broadInt = new Intent(BroadcastNotification.ACTION);
 
-        broadInt.putExtra("PomOut", rsltText+"  in Uscita!");
-sendBroadcast(broadInt);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
+
+
+
+sendBroadcast(myIntent);
+
+
 
     }
 
