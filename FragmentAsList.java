@@ -7,7 +7,6 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -81,16 +81,16 @@ static public Integer id;
         SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
         int numberUrg = settings.getInt("variable", -1);
-
-        if(numbersUrgent==null) {
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 85): numberUrg "+numberUrg);
+Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 86): numbersUrgent "+numbersUrgent);
+      if(numbersUrgent==null) {
             numbersUrgent = numberUrg;
+            Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 87): ");
 
         }
-        IntentFilter filter = new IntentFilter();
-filter.addAction(BroadcastNotification.ACTION);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-           receiver = new BroadcastNotification();
-        getActivity().registerReceiver(receiver, filter);
+
+        //TODO maybe you can elimate these rows if is written in the manifest?
+//
 
 
 
@@ -148,6 +148,7 @@ filter.addAction(BroadcastNotification.ACTION);
                 mShareIntent = new Intent();
                 mShareIntent.setAction(Intent.ACTION_SEND);
                 mShareIntent.setType("text/plain");
+
                 mShareIntent.putExtra(Intent.EXTRA_TEXT, "Download this app from google play, it is pretty cool!");
 
                 if(mShareActionProvider!=null){
@@ -284,6 +285,8 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
 
             case R.id.rememberIn5:
+
+                //TODO TEMP how to get the cursor..
                 Cursor cursor = cVA.getCursor();
                 cursor.moveToPosition(index);
                 description= cursor.getString(1);
@@ -343,12 +346,18 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
     @Override
     public void onPause() {
         super.onPause();
+        SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
-        try {
-            getActivity().unregisterReceiver(receiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("variable", numbersUrgent);
+        editor.commit();
+
+
+//        try {
+//            getActivity().unregisterReceiver(receiver);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 
     }

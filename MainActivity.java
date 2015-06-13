@@ -8,9 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity    implements FragmentAsList.Callback {
-    //TODO FIRST1 reminder notification after spinner list
-    //TODO FIRST1 cambia nomein Main Activity action bar
-    //TODO FIRST1 fix splash screen to Linear Layout
+    //TODO  reminder notification after spinner list
+
     //1 day, 3 days, 5 days, 1 week
     //http://stackoverflow.com/questions/1082437/android-alarmmanager?lq=1
     //http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
@@ -136,6 +135,9 @@ public class MainActivity extends ActionBarActivity    implements FragmentAsList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       // BroadcastNotification.scheduleAlarms(this);
+       // Toast.makeText(this,"See you in five days",Toast.LENGTH_LONG).show();
+
 
 
 

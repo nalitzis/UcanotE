@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 
-//TODO 1
+
 
 public class SplashScreen extends Activity {
 
