@@ -9,19 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class Db {
 
-//TODO check if all the fields are used,
-// expecially TAG, ALL KEYS and columns, and what is the function of DB info?
 
-    //fields
-
-
-    //DB info
     public static final String DATABASE_NAME = "db";
 
-    //always remember to change this if I are going to update the DB!
     public static final int    DATABASE_VERSION=1;
 
-    //create
 
     private static final String DATABASE_CREATE_SQL=
             "CREATE TABLE " + UcanContract.Tasks.DATABASE_TABLE

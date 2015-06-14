@@ -2,9 +2,12 @@
 package ivano.android.com.ucanote;
 
 
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -15,7 +18,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 import ivano.android.com.ucanote.ivano.android.com.ucanote.db.Db;
 import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContentProvider;
@@ -61,7 +65,7 @@ static public Integer id;
     Db myDb;
     CustomViewAdapter cVA;
     Intent mShareIntent;
-    BroadcastNotification receiver;
+
     AdapterView.AdapterContextMenuInfo info;
 
    private ShareActionProvider mShareActionProvider;
@@ -81,15 +85,12 @@ static public Integer id;
         SharedPreferences settings = getActivity().getSharedPreferences("prova", getActivity().MODE_PRIVATE);
 
         int numberUrg = settings.getInt("variable", -1);
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 85): numberUrg "+numberUrg);
-Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 86): numbersUrgent "+numbersUrgent);
+
       if(numbersUrgent==null) {
             numbersUrgent = numberUrg;
-            Log.d("ivano.android.com.ucanote.FragmentAsList", "onCreate (line 87): ");
 
         }
 
-        //TODO maybe you can elimate these rows if is written in the manifest?
 //
 
 
@@ -286,22 +287,23 @@ getLoaderManager().restartLoader(1, null, (LoaderManager.LoaderCallbacks<Cursor>
 
             case R.id.rememberIn5:
 
-                //TODO TEMP how to get the cursor..
+                //get the cursor..
                 Cursor cursor = cVA.getCursor();
                 cursor.moveToPosition(index);
                 description= cursor.getString(1);
+                AlarmManager mgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                Intent i = new Intent(getActivity(), IntentServiceClass.class);
+                PendingIntent pendingIntent = PendingIntent.getService(getActivity(), 0, i, 0);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 8);
+                calendar.set(Calendar.MINUTE, 0);
 
-                Intent intent = new Intent(getActivity(), IntentServiceClass.class);
-                intent.putExtra("Pom",description);
-                getActivity().startService(intent);
-
-
-
+                calendar.set(Calendar.SECOND, 0);
+                mgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+24*60*60*1000, 24*60*60*1000 , pendingIntent);
+                Toast.makeText(getActivity(), "SEE YOU TOMORROW!",Toast.LENGTH_LONG ).show();
 
                 break;
-            case R.id.share:
-                //TODO text?
-                break;
+
 
         }
 
