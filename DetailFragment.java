@@ -21,6 +21,7 @@ import ivano.android.com.ucanote.ivano.android.com.ucanote.db.UcanContract;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    //possible NPE
     TextView textView;
     Uri mUri;
 
